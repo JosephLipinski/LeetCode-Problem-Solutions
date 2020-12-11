@@ -1,16 +1,39 @@
 class Solution:
+
+    # A helper function to make the algorithm of dynamicProgrammingApproach more understandible.
+    def print_dp(self, dp):
+        for row in dp:
+            print(row)
+
     # The Most Efficient Solution According to the Solution Section
     def dynamicProgrammingApproach(self, s, p):
         dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
 
+        # Assume that a solution can be found
         dp[-1][-1] = True
+        # Populate the decisions of the matrix to reflect our decision history
         for i in range(len(s), -1, -1):
             for j in range(len(p) - 1, -1, -1):
+                # i < len(s)          Check that we are not in padding column
+                # p[j] in {s[i], '.'} Check if we are matching the character 
                 first_match = i < len(s) and p[j] in {s[i], '.'}
+                # j+1 < len(p) Check that we are not in the padding column
+                # p[j+1]       Check if the previous character was "*" 
                 if j+1 < len(p) and p[j+1] == '*':
-                    dp[i][j] = dp[i][j+2] or first_match and dp[i+1][j]
+                    result = dp[i][j+2] or first_match and dp[i+1][j]
+                    dp[i][j] = result 
+                    if result:
+                        print(i, j)
+                        self.print_dp(dp)
                 else:
-                    dp[i][j] = first_match and dp[i+1][j+1]
+                    # First match explained at assignment
+                    # dp[i+1][j+1] Check down right of current position i.e. the previous character matched
+                    result = first_match and dp[i+1][j+1]
+                    dp[i][j] = result
+                    if result:
+                        print(i, j)
+                        self.print_dp(dp)
+                
 
         return dp[0][0]
     
@@ -88,4 +111,10 @@ class Solution:
             return False if False in [isinstance(p_0, tuple) for p_0 in p_stack] else True
         else:
             return False
-        
+
+
+if __name__ == "__main__":
+    solution = Solution()
+    string = "mississippi" 
+    pattern = "mis*is*ip*i"
+    solution.dynamicProgrammingApproach(string, pattern)
